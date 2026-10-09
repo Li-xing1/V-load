@@ -1,38 +1,38 @@
-# V-load：多桥车辆荷载概率建模
+# V-load: Probabilistic Vehicle Load Modeling Across Multiple Bridges
 
-本项目包含多桥车辆数据预处理、数据集加载、概率模型训练、采样和分布评估代码。上传版本只包含源代码和配置，不包含原始数据、预处理结果、训练权重或实验输出。
+This project provides data preprocessing, dataset loading, probabilistic model training, sampling, and distribution evaluation for vehicle observations across multiple bridges. The upload version contains source code and configuration files only; raw data, preprocessed datasets, model checkpoints, and experiment outputs are not included.
 
-## 模型与目录
+## Models and Project Structure
 
-| 模块 | 功能 |
+| Module | Purpose |
 | --- | --- |
-| `V_C` | 车辆类别与类别流量建模 |
-| `V_V` | 车速与流量的二元联合概率建模 |
-| `V_W` | 按车型训练车辆轴重条件概率模型 |
-| `V_S` | 车辆间距条件概率建模 |
+| `V_C` | Vehicle class and class-specific traffic flow modeling |
+| `V_V` | Bivariate joint probabilistic modeling of vehicle speed and traffic flow |
+| `V_W` | Conditional axle-weight modeling with separate models for each vehicle class |
+| `V_S` | Conditional vehicle-spacing modeling |
 
 ```text
 V-load/
-├── args/                         # 通用、数据集、模型与绘图 YAML 配置
-├── dataset/                      # 数据加载、标准化、采样及图结构处理
-├── models/                       # 四类概率模型及公共组件
-├── utils/                        # 训练、实验记录、绘图及分布评估工具
+├── args/                         # General, dataset, model, and plotting YAML configurations
+├── dataset/                      # Data loading, normalization, sampling, and graph processing
+├── models/                       # Four probabilistic models and shared components
+├── utils/                        # Training, experiment logging, plotting, and evaluation
 ├── data/
-│   ├── weather.py                # 历史天气采集及 Excel 导出
-│   ├── encode_weather_categories.py  # 天气类别编码及映射保存
-│   └── preprocess.py             # 生成训练和调试数据
-├── Train_main.py                 # 按配置训练并评估启用的模型
+│   ├── weather.py                # Historical weather retrieval and Excel export
+│   ├── encode_weather_categories.py  # Weather category encoding and mapping export
+│   └── preprocess.py             # Training and debug dataset generation
+├── Train_main.py                 # Training and evaluation of enabled models
 ├── Train_V_C.py
 ├── Train_V_V.py
 ├── Train_V_W.py
 ├── Train_V_S.py
-├── request.txt                   # Python 依赖清单
+├── request.txt                   # Python dependencies
 └── readme.md
 ```
 
-## 环境与安装
+## Environment and Installation
 
-上传前的语法、模块导入与命令行检查使用 Python 3.9.18。`request.txt` 根据代码实际依赖及本机已安装版本编写，包含 TensorBoard；它不是整个 Conda 环境的导出文件。以下命令须在项目根目录运行。
+The syntax, module import, and command-line checks performed before upload used Python 3.9.18. `request.txt` lists the dependencies used by the code, pinned to the versions installed in the validation environment, including TensorBoard. It is not a full Conda environment export. Run the following commands from the project root after cloning.
 
 ```bash
 git clone --branch 上传版本 --single-branch git@github.com:Li-xing1/V-load.git
@@ -40,7 +40,7 @@ cd V-load
 python -m venv .venv
 ```
 
-激活环境后安装依赖：
+Activate the environment and install the dependencies:
 
 ```powershell
 # Windows PowerShell
@@ -54,66 +54,66 @@ source .venv/bin/activate
 python -m pip install -r request.txt
 ```
 
-`args/args.yaml` 默认使用 `cuda:0`。无可用 GPU 时，请将该配置改为 `cpu`，或在单模型命令中传入 `--device cpu`。GPU 训练需要与本机驱动兼容的 CUDA 版 PyTorch。本次上传检查使用 CPU 版 PyTorch，没有执行完整训练。
+`args/args.yaml` defaults to `cuda:0`. If no GPU is available, change this setting to `cpu`, or pass `--device cpu` to a single-model training script. GPU training requires a CUDA-enabled PyTorch installation compatible with the local GPU driver. Upload validation used CPU-only PyTorch; full model training was not performed.
 
-## 数据准备
+## Data Preparation
 
-数据不随代码公开，需要自行提供。默认布局如下：
+Datasets are not distributed with the code and must be supplied separately. The default layout is:
 
 ```text
 data/SZ/
-├── Excel/                       # 各桥逐车记录的 .xlsx 文件
-├── Weather.xlsx                 # 天气数据
-├── restday.xlsx                 # 至少含 date、restday 列
+├── Excel/                       # Per-vehicle observations for each bridge (.xlsx)
+├── Weather.xlsx                 # Weather observations
+├── restday.xlsx                 # Must contain at least date and restday columns
 └── data/
-    ├── bridge_information.xlsx  # 桥梁编码、车道与空间属性
-    ├── G_distance.npy           # 桥梁距离矩阵，V_C / V_V 使用
-    ├── G_duration.npy           # 桥梁通行时长矩阵，V_C / V_V 使用
-    ├── npy/                    # 预处理后生成
-    └── debug_npy/              # 预处理后生成的调试子集
+    ├── bridge_information.xlsx  # Bridge identifiers, lane mappings, and spatial attributes
+    ├── G_distance.npy           # Bridge distance matrix, used by V_C / V_V
+    ├── G_duration.npy           # Bridge travel-time matrix, used by V_C / V_V
+    ├── npy/                    # Generated preprocessed datasets
+    └── debug_npy/              # Generated debug subsets
 ```
 
-逐车记录至少包含 `time`、`lane_id`、`veh_type`、`axle_num`、`grossload`、`speed`。轴重模型还需要相应的 `axle1` 等轴重列；预处理会尝试读取 `axle_dis1` 等轴距列。文件名中的设施编码应与桥梁元数据对应，例如 `hsd_设施编码.xlsx`。元数据还需要车道映射、`location`、`总车道数`、`建成年份编码`、`道路等级编码` 等字段，具体要求以 `data/preprocess.py` 和 `dataset/common.py` 为准。
+Per-vehicle records must contain at least `time`, `lane_id`, `veh_type`, `axle_num`, `grossload`, and `speed`. Axle-weight models also require the corresponding axle-weight columns, such as `axle1`. Preprocessing attempts to read axle-spacing columns such as `axle_dis1`. The facility identifier in each filename must match the bridge metadata, for example `hsd_<facility_code>.xlsx`. Metadata must also include lane mappings, `location`, and the original column names `总车道数` (total lane count), `建成年份编码` (construction-year code), and `道路等级编码` (road-class code). These Chinese column names are retained because the code reads them literally. Refer to `data/preprocess.py` and `dataset/common.py` for the exact schema.
 
-### 可选：获取和编码天气
+### Optional: Retrieve and Encode Weather Data
 
-`data/weather.py` 调用 K780 天气接口，需要有效 API 凭证和网络连接。上传版本已移除硬编码凭证，改为环境变量读取；不要将凭证写回代码或提交到 Git。
+`data/weather.py` calls the K780 weather API and requires valid API credentials and a network connection. The upload version reads credentials from environment variables instead of hardcoding them. Do not write credentials into the source code or commit them to Git.
 
 ```powershell
-$env:K780_APPKEY = '你的 APPKEY'
-$env:K780_SIGN = '你的 SIGN'
+$env:K780_APPKEY = 'your APPKEY'
+$env:K780_SIGN = 'your SIGN'
 python data/weather.py --start-date 20260714 --end-date 20260912 --wea-id 169
 ```
 
-采集结果写入 `data/jsq/`，而预处理读取 `data/SZ/Weather.xlsx`。提前创建目标父目录后，可将采集结果编码到预处理目录：
+Weather retrieval writes its output to `data/jsq/`, while preprocessing reads `data/SZ/Weather.xlsx`. Create the destination parent directory first, then encode the retrieved data into the preprocessing directory:
 
 ```bash
 python data/encode_weather_categories.py --input data/jsq/Weather.xlsx --output data/SZ/Weather.xlsx --mapping-output data/SZ/Weather_category_mapping.json
 ```
 
-编码默认替换 `weatid`、`winpid`，编号从 0 开始。不指定 `--output` 会覆盖输入文件；`--append-columns` 可保留原列并添加编码列。已有天气数据可直接提供到 `data/SZ/Weather.xlsx`，`preprocess.py` 也会进行类别编码并保存映射。
+By default, encoding replaces `weatid` and `winpid` with category IDs starting at 0. Omitting `--output` overwrites the input file. Use `--append-columns` to retain the original columns and append encoded columns instead. Existing weather data can be supplied directly as `data/SZ/Weather.xlsx`; `preprocess.py` also encodes weather categories and saves the mappings.
 
-### 生成训练数据
+### Generate Training Datasets
 
-先核对 `args/dataset_args.yaml` 中的时间范围、桥梁节点、车道及数据目录，再运行：
+Check the time range, bridge nodes, lanes, and dataset paths in `args/dataset_args.yaml`, then run:
 
 ```bash
 python data/preprocess.py
 ```
 
-预处理默认以 5 分钟间隔组织数据，生成 `V_C`、`V_V` 的 `.npy` 文件，按车型生成 `V_W_车型.npz`，生成 `V_S.npz`，同时写出调试子集。桥梁距离和通行时长矩阵需另行准备，以上脚本不会生成这两个文件。
+Preprocessing uses 5-minute intervals by default. It generates `.npy` files for `V_C` and `V_V`, class-specific `V_W_<vehicle_class>.npz` files, `V_S.npz`, and debug subsets. Bridge distance and travel-time matrices must be prepared separately; this script does not generate them.
 
-## 训练与评估
+## Training and Evaluation
 
-### 统一入口
+### Unified Entry Point
 
 ```bash
 python Train_main.py
 ```
 
-统一入口直接读取配置，不提供单模型脚本的命令行参数。通过 `args/args.yaml` 中的 `V_C_train`、`V_V_train`、`V_W_train`、`V_S_train` 选择训练模块。当前配置仅开启 `V_W` 与 `V_S`，各模型默认训练 100 个 epoch。运行后使用相应最佳权重进行采样和评估。
+The unified entry point reads configuration files directly and does not expose the command-line arguments of the single-model scripts. Select the models to train using `V_C_train`, `V_V_train`, `V_W_train`, and `V_S_train` in `args/args.yaml`. The current configuration enables only `V_W` and `V_S`; each model defaults to 100 training epochs. Sampling and evaluation use the corresponding best checkpoints after training.
 
-### 单模型入口
+### Single-Model Entry Points
 
 ```bash
 python Train_V_C.py --device cpu --work-path vc_demo
@@ -122,31 +122,31 @@ python Train_V_W.py --vehicle-class 2C 2F --device cpu --work-path vw_demo
 python Train_V_S.py --device cpu --work-path vs_demo
 ```
 
-单模型脚本支持 `--args-dir`、`--dataset-args`、`--work-path`、`--device` 和 `--debug`。`V_W` 不指定 `--vehicle-class` 时会根据数据文件发现车型。额外参数可通过 `python Train_V_W.py --help` 等命令查看。
+Single-model scripts support `--args-dir`, `--dataset-args`, `--work-path`, `--device`, and `--debug`. If `--vehicle-class` is omitted, `V_W` discovers available vehicle classes from the dataset files. Use commands such as `python Train_V_W.py --help` to inspect additional options.
 
 ```bash
 python Train_V_S.py --debug --device cpu --work-path debug_vs
 ```
 
-`--debug` 使用 `debug_npy` 并将训练轮数设为 2，仍须先完成数据预处理；缺少数据时不能直接训练。
+`--debug` uses `debug_npy` and reduces training to 2 epochs. Data preprocessing is still required; debug mode does not allow training without datasets.
 
-### 配置说明
+### Configuration Files
 
-| 文件 | 作用 |
+| File | Purpose |
 | --- | --- |
-| `args/args.yaml` | 设备、随机种子、实验名、启用模型与调试开关 |
-| `args/dataset_args.yaml` | 数据路径、时间范围、切分、桥梁及车道定义 |
-| `args/V_C.yaml` 等 | 各模型结构和训练超参数 |
-| `args/figure.yaml` | 绘图样式和输出参数 |
+| `args/args.yaml` | Device, random seed, experiment name, enabled models, and debug settings |
+| `args/dataset_args.yaml` | Dataset paths, time range, splits, bridge nodes, and lane definitions |
+| `args/V_C.yaml` and corresponding model files | Model architecture and training hyperparameters |
+| `args/figure.yaml` | Plot styles and output settings |
 
-数据切分遵循 `split_order`，不能直接假定三个数依次表示训练、验证、测试。当前顺序为 `[Test, Val, Train]`，比例权重为 `[49, 5, 7]`。车型、桥梁、时间范围或车道定义变化后，应同步调整配置和输入数据。
+Dataset partitioning follows `split_order`; do not assume the three values represent training, validation, and test sets in that order. The current order is `[Test, Val, Train]`, with relative weights `[49, 5, 7]`. Update configurations and input data together when changing vehicle classes, bridge nodes, time ranges, or lane definitions.
 
-## 输出与注意事项
+## Outputs and Notes
 
-实验结果写入 `exp/<实验名>/`，包括 `resolved_config.json`、`log/`、`checkpoint/`、`plot/figure/` 和 `plot/data/`。`save_name` 为 `time` 时使用运行时间作为实验名。日志目录还包含 TensorBoard 记录：
+Experiment outputs are stored in `exp/<experiment_name>/`, including `resolved_config.json`, `log/`, `checkpoint/`, `plot/figure/`, and `plot/data/`. When `save_name` is `time`, the experiment name is generated from the execution timestamp. The log directory also contains TensorBoard records:
 
 ```bash
 tensorboard --logdir exp
 ```
 
-本上传分支只发布用户指定的代码范围，额外包含依赖清单、本文档和 `.gitignore`。原始数据、缓存、IDE 配置、历史提交和实验输出均不包含在上传包中。完整训练及数据格式兼容性需在准备好实际数据后验证。
+The upload branch contains only the requested source files, the dependency list, this document, and `.gitignore`. Raw data, caches, IDE settings, the original development history, and experiment outputs are excluded. Full training and compatibility with actual input datasets must be verified after the required data has been prepared.
