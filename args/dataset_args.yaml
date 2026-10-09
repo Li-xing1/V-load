@@ -1,0 +1,93 @@
+dataset_root: data/SZ/data
+start_time: '2026-07-14 00:00:00.000'
+end_time: '2026-09-12 23:59:59.000'
+time_interval_minutes: 5
+train_bridge_nodes: [0, 2, 3, 4, 5, 6, 7, 8, 10, 11]
+unknown_bridge_nodes: [1, 9]
+core_known_bridge: 11
+core_unknown_bridge: 1
+canonical_lanes: [上行右, 上行中, 上行左, 下行左, 下行中, 下行右]
+V_C:
+  dataset_root: data/SZ/data
+  num_nodes: 12
+  which_transition_matrices: [True, True]
+  split: [49, 5, 7]
+  split_order: [Test, Val, Train]
+  len: 24
+  num_lines: 6
+  top_k: 10
+  eigenmaps_k: 10
+  temporal_embedding_list: [288, 2, 8, 1, 1, 5, 1]
+  spatial_embedding_list: [1, 4, 3, 1, 1]
+  location_feature_indices: [3, 4]
+  location_fourier_levels: 4
+V_V:
+  dataset_root: data/SZ/data
+  num_nodes: 12
+  which_transition_matrices: [True, True]
+  split: [49, 5, 7]
+  split_order: [Test, Val, Train]
+  len: 24
+  num_lines: 6
+  top_k: 10
+  eigenmaps_k: 10
+  max_speed_mps: 50.0
+  temporal_embedding_list: [288, 2, 8, 1, 1, 5, 1]
+  spatial_embedding_list: [1, 4, 3, 1, 1]
+  location_feature_indices: [3, 4]
+  location_fourier_levels: 4
+
+V_W:
+  dataset_root: data/SZ/data
+  split: [49, 5, 7]
+  split_order: [Test, Val, Train]
+  sampling_seed: 2026
+  max_train_samples:
+    '2C': 500000
+    '2F': 250000
+    '3': null
+    '4': null
+    '5': null
+    '6': null
+  max_val_samples: 70000
+  max_test_samples:
+    '2C': 240000
+    '2F': 120000
+    '3': 120000
+    '4': 120000
+    '5': 120000
+    '6': 120000
+  balance_bridge_lanes: true
+  temporal_embedding_list: [288, 2, 8, 1, 1, 5, 1, 1, 4, 3, 1, 1, 6, 1, 1]
+  location_feature_indices: [10, 11]
+  location_fourier_levels: 4
+
+V_S:
+  dataset_root: data/SZ/data
+  split: [49, 5, 7]
+  split_order: [Test, Val, Train]
+  sampling_seed: 2026
+  max_train_samples: 1000000
+  max_val_samples: 140000
+  max_test_samples: 240000
+  balance_bridge_lanes: true
+  temporal_embedding_list: [288, 2, 8, 1, 1, 5, 1, 1, 4, 3, 1, 1, 6, 1, 1, 6, 6, 1]
+  location_feature_indices: [10, 11]
+  location_fourier_levels: 4
+
+
+known_lanes:
+  '0': [ 1,2,3,4,5,6 ]
+  '1': [ 1,3,4,6 ]
+  '2': [ 4,5,6 ]
+  '3': [ 1,2,3,4,5,6 ]
+  '4': [ 1,2,3,4,5,6 ]
+  '5': [ 1,2,3,4,5,6 ]
+  '6': [ 1,2,3,4,5 ]
+  '7': [ 1,2,3,4,5,6 ]
+  '8': [ 2,5 ]
+  '9': [ 1,2,3,4,5,6 ]
+  '10': [ 1,2,3,4,5,6 ]
+  '11': [ 1,2,3,4,5,6 ]
+
+

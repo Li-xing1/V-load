@@ -1,0 +1,145 @@
+general:
+  width_mm: 180
+  font_size: 10
+  title_font_size: 10
+  label_font_size: 10
+  tick_font_size: 10
+  legend_font_size: 10
+  dpi: 900
+  savefig_dpi: 900
+  bins: 70
+  range_percentile: 99.5
+  line_width: 2.0
+  spine_width: 1.0
+  grid_width: 0.8
+  real_color: "#c6ddeb"
+  generated_color: "#df2528"
+  real_label: "flow"
+  generated_label: "sample"
+  grid_color: "#e7e7e7"
+  fonts:
+    chinese: "C:\\Windows\\Fonts\\simsun.ttc"
+    english: "C:\\Windows\\Fonts\\times.ttf"
+
+plots:
+  axis_weight_marginals:
+    subplot_aspect: 0.7
+    show_suptitle: false
+    unit_scale: 0.001
+    xlabel_template: "Axle {index} Weight (T)"
+    xlim: null
+    xlim_by_vehicle: {}
+    max_cols: 3
+    margins:
+      left: 0.1
+      right: 0.98
+      bottom: 0.13
+      top: 0.98
+    wspace: 0.4
+    hspace: 0.5
+    suptitle_y: 0.98
+
+  axis_weight_pearson:
+    margins_mm:
+      left: 14
+      right: 13
+      bottom: 16
+      top: 8
+    titles: ["flow", "sample"]
+    subplot_gap_mm: 22
+    colorbar_width_mm: 3
+    colorbar_gap_mm: 3
+    spine_width: 0.8
+    show_suptitle: false
+    suptitle_y: 0.98
+
+  vehicle_total_weight_summary:
+    subplot_aspect: 0.7
+    show_suptitle: false
+    unit_scale: 0.001
+    xlabel: "Total Weight (T)"
+    title_template: "Vehicle {vehicle_type}"
+    xlim: null
+    xlim_by_vehicle: {}
+    max_cols: 3
+    margins:
+      left: 0.1
+      right: 0.98
+      bottom: 0.13
+      top: 0.92
+    wspace: 0.4
+    hspace: 0.65
+    suptitle_y: 0.98
+
+  line_distribution_summary:
+    subplot_aspect: 0.7
+    show_suptitle: false
+    title_template: "{line} Lane"
+    xlabels:
+      V_S: "Vehicle Spacing (m)"
+      V_V: "Vehicle Speed (m/s)"
+    xlim: null
+    xlim_by_model:
+      V_S: [0, 2500]
+      V_V: [0, 50]
+    max_cols: 3
+    margins:
+      left: 0.1
+      right: 0.98
+      bottom: 0.13
+      top: 0.92
+    wspace: 0.4
+    hspace: 0.65
+    model_overrides:
+      V_V:
+        margins:
+          left: 0.08
+          right: 0.99
+          bottom: 0.15
+          top: 0.90
+        wspace: 0.45
+        hspace: 0.75
+        legend_font_size: 8
+    suptitle_y: 0.98
+
+  vehicle_class_ratio_timeseries:
+    aspect_ratio: 0.3333333333333333
+    show_title: false
+    sample_index: 0
+    time_index: 0
+    line_index: 0
+    time_steps: 2016
+    time_step_minutes: 5
+    tick_interval_hours: 6
+    xlabel: "Time"
+    ylabel: "Vehicle class ratio"
+    title: "Observed and generated vehicle class ratios"
+    prediction_label: "Sample"
+    real_label: "Real"
+    colors: ["#2f6fbb", "#d14b3a", "#2f8f5b", "#8a5ab8", "#d9902f", "#4f9da6"]
+    margins:
+      left: 0.075
+      right: 0.995
+      bottom: 0.18
+      top: 0.85
+
+  vehicle_speed_timeseries:
+    aspect_ratio: 0.3333333333333333
+    show_title: false
+    sample_index: 0
+    time_index: 0
+    line_index: 0
+    time_steps: 2016
+    time_step_minutes: 5
+    tick_interval_hours: 6
+    xlabel: "Time"
+    ylabel: "Speed (m/s)"
+    title: "Vehicle speed time series comparison"
+    prediction_label: "Sample"
+    real_label: "Real"
+    colors: ["#2f6fbb", "#d14b3a", "#2f8f5b", "#8a5ab8", "#d9902f", "#4f9da6", "#7a7a7a", "#bf6f30"]
+    margins:
+      left: 0.075
+      right: 0.995
+      bottom: 0.18
+      top: 0.85

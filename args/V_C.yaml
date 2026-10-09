@@ -1,0 +1,31 @@
+epoch: 100
+batch_size: 64
+lr: 0.001
+eps: 1.0e-08
+weight_decay: 0.0002
+milestones: [ 0.20,0.50,0.80 ]
+gamma: 0.1
+val_freq: 1
+clip_grad_norm: True
+max_grad_norm: 10
+model:
+  d_model: 12
+  d_k: 4
+  num_heads: 4
+  dropout: 0.3
+  epsilon: 5e-2
+  d_hidden_mt: 64
+  d_hidden_gm: 16
+  num_hidden_B: 256
+  num_hidden_layer_B: 3
+  emission_meta_rank: 4
+  num_hidden_A: 128
+  num_hidden_layer_A: 3
+  noAG: False
+  noML: False
+  noGC: False
+  noTE: False
+  noSE: False
+  noLOG: False
+dataset:
+  balance_classes: false

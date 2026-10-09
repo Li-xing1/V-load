@@ -1,0 +1,8 @@
+save_name: 'time'
+device: 'cuda:0'
+seed: 2026
+V_C_train: False
+V_V_train: False
+V_W_train: True
+V_S_train: True
+debug: False

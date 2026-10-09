@@ -1,0 +1,31 @@
+epoch: 100
+patience_epochs: 100
+batch_size: 1024
+lr: 0.001
+eps: 1.0e-08
+weight_decay: 0.0002
+milestones: [ 0.20,0.40,0.60,0.80 ]
+gamma: 0.1
+val_freq: 1
+clip_grad_norm: True
+max_grad_norm: 10
+model:
+  num_features: 2
+  hidden_dim: 512
+  context_dim: 256
+  num_components: 4
+  base_min_log_std: -3.0
+  base_max_log_std: 1.0
+  num_layer: 6
+  rational_quadratic_coupling:
+    hidden_features: 256
+    num_transform_blocks: 3
+    dropout_probability: 0.10
+    use_batch_norm: False
+    num_bins: 16
+    tail_bound: 4.0
+    apply_unconditional_transform: False
+  contextual_affine_coupling:
+    positive_output_eps: True
+    log_scale_bound: 2.0
+    eps: 1.0e-30

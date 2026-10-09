@@ -1,0 +1,39 @@
+epoch: 100
+patience_epochs: 100
+batch_size: 64
+max_speed_mps: 50.0
+lr: 0.001
+eps: 1.0e-08
+weight_decay: 0.0002
+milestones: [ 0.20,0.50,0.80 ]
+gamma: 0.1
+val_freq: 1
+clip_grad_norm: True
+max_grad_norm: 10
+model:
+  d_model: 12
+  epsilon: 5e-2
+  d_K: 4
+  num_heads: 4
+  dropout: 0.3
+  d_hidden_mt: 16
+  len: 24
+  num_lines: 6
+  num_hidden_B: 256
+  num_hidden_layer_B: 3
+  emission_meta_rank: 4
+  num_hidden_A: 128
+  num_hidden_layer_A: 3
+  min_obs_scale: 0.001
+  correlation_margin: 0.0001
+  observation_quad_points: 16
+  obs_min: -1.0
+  obs_max: 1.0
+  noML: False
+  noGC: False
+  noTE: False
+  noSE: False
+  noAG: False
+dataset:
+  len: 24
+  split: [0.7, 0.1, 0.2]
